@@ -1,0 +1,46 @@
+MODULE main
+
+-- This is an encoding of a /temporal logic of actions/ (TLA) problem
+-- with so-called "strong" and "weak" fairness assumptions (refer to
+-- files `compassion.tla` and `compassion.cfg`) as a model checking
+-- problem.
+--
+-- In the TLA problem, there are three states, A, B, and C, with
+-- transitions A->B, B->A, A->C, and C->C.  Under certain fairness
+-- assumptions, the model will eventually reach state C.
+--
+-- One failure mode is for the system to "stutter" forever in state B;
+-- a "weak fairness" assumption on the transition B->A prevents that.
+--
+-- Another failure mode is for the system to loop back and forth
+-- between A and B forever; in this case, a "strong fairness"
+-- assumption is needed to prevent A->B from always "preempting" A->C.
+
+VAR st : {a, b, c};
+VAR a2b : boolean;
+VAR b2a : boolean;
+VAR a2c : boolean;
+VAR c2c : boolean;
+VAR stutter_st : boolean;
+
+INIT st = a;
+
+INVAR (st = a) -> (a2b | a2c | stutter_st);
+INVAR (st = b) -> (b2a | stutter_st);
+INVAR (st = c) -> (c2c | stutter_st);
+INVAR count(a2b, b2a, a2c, c2c, stutter_st) = 1;
+
+TRANS a2b -> (st = a) & next(st = b);
+TRANS b2a -> (st = b) & next(st = a);
+TRANS a2c -> (st = a) & next(st = c);
+TRANS c2c -> (st = c) & next(st = c);
+
+TRANS stutter_st -> next(st) = st;
+
+JUSTICE !((st = b) & stutter_st); -- prevent "stutter forever in state B"
+
+COMPASSION ((st = a), a2c); -- prevent "A->B always preempts A->C"
+
+-- LTLSPEC F (st = c); -- passes; LTL w/ COMPASSION *is* supported
+
+CTLSPEC AF (st = c); -- fails (erroneously!); CTL w/ COMPASSION *not* supported

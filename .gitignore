@@ -1,0 +1,8 @@
+## Emacs
+*~
+
+## Racket
+**/compiled/
+
+## SMT-LIB encodings
+**/*.d/*.smt2

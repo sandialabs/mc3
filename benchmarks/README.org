@@ -1,0 +1,29 @@
+#+TITLE: MC3 Benchmarking
+#+AUTHOR: Blake C. Rawlings
+
+This directory includes the material to run some benchmark problems
+--- specifically, the ones from the 2015 Hardware Model Checking
+Competition.  The actual benchmark problems themselves are very large,
+and are not kept here; they can be downloaded from
+[[http://fmv.jku.at/hwmcc15/]].  The benchmarks depend on AIGER and
+NuSMV (refer to [[file:../README.org]]).
+
+First, download the benchmarks and unpack them to the proper
+directories (refer to [[Makefile]]).  Next, run =mc3= on each of the
+benchmark problems and log the output:
+#+BEGIN_SRC sh
+  make all
+#+END_SRC
+After that, summarize the results:
+#+BEGIN_SRC sh
+  make summarize
+#+END_SRC
+If NuSMV is available, run it with various combinations of settings on
+each of the problems that =mc3= solved:
+#+BEGIN_SRC sh
+  make all-nusmv
+#+END_SRC
+and produce a table with the results:
+#+BEGIN_SRC sh
+  make compare
+#+END_SRC

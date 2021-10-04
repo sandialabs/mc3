@@ -1,0 +1,10 @@
+MODULE main
+VAR state : {a, b, c};
+DEFINE p := state in {a, c};
+ASSIGN next(state) :=
+  case
+    state = a : {a, b};
+    state = b : c;
+    state = c : c;
+  esac;
+LTLSPEC (F (G p));

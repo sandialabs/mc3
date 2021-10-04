@@ -1,0 +1,5 @@
+## logs, etc. generated when running the examples
+*.csv
+*.dot
+*.log
+*.svg

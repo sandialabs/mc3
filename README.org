@@ -1,0 +1,126 @@
+#+TITLE: MC3 --- Modal Mu Calculus Model Checking Using Myopic Constraints
+#+AUTHOR: Blake C. Rawlings
+
+This is =mc3 v0.1.0=, a prototype implementation of a
+satisfiability-based modal mu calculus (MMC) model checking algorithm.
+
+* Organization
+
+| Directory           | Contents                                |
+|---------------------+-----------------------------------------|
+| [[file:src]]        | the prototype solver, written in Racket |
+| [[file:examples]]   | example problems                        |
+| [[file:benchmarks]] | benchmark problems                      |
+
+* Usage
+
+Print some info about =mc3='s command-line interface:
+#+BEGIN_SRC sh
+  racket src/mc3.rkt --help
+#+END_SRC
+
+Run =mc3= on one of the examples:
+#+BEGIN_SRC sh
+  racket src/mc3.rkt examples/mmc-1.rkt
+#+END_SRC
+
+Compile the Racket code and run all the examples:
+#+BEGIN_SRC sh
+  make all
+#+END_SRC
+
+* Dependencies
+
+*N.B.:* This project is developed on Linux, so these instructions may
+need to be adapted to other platforms.
+
+** [[https://racket-lang.org/][Racket]]
+
+The prototype solver is written in Racket; on Debian-like Linux
+distributions, run the following command:
+
+#+BEGIN_SRC sh
+  apt install racket
+#+END_SRC
+
+Current development of =mc3= uses
+[[https://blog.racket-lang.org/2021/02/racket-v8-0.html][Racket v8.0]].
+
+** Racket Packages
+
+*** [[https://pkgs.racket-lang.org/package/rosette][Rosette]]
+
+Rosette is used for its interface to SAT/SMT solvers.  Current
+development of =mc3= uses
+[[https://github.com/emina/rosette/tree/4.0][Rosette 4.0]], installed
+from source.
+
+#+BEGIN_SRC sh
+  git clone https://github.com/emina/rosette.git --branch 4.0
+  raco pkg install ./rosette
+#+END_SRC
+
+It includes a copy of the SMT solver
+[[https://github.com/Z3Prover/z3][Z3]], which is what =mc3= uses.
+
+*** [[https://pkgs.racket-lang.org/package/brag][brag: a better Racket AST generator]]
+
+=brag= is used to parse NuSMV models and Büchi automata encoded in the
+[[https://spot.lrde.epita.fr/concepts.html#lbtt][LBTT format]].
+
+#+BEGIN_SRC sh
+  raco pkg install brag
+#+END_SRC
+
+*** [[https://pkgs.racket-lang.org/package/graph][Racket Generic Graph Library]]
+
+The =graph= library is used to analyze the structure of MMC formulas.
+
+#+BEGIN_SRC sh
+  raco pkg install graph
+#+END_SRC
+
+The associated visualizations depend on
+[[https://graphviz.org/][Graphviz]].
+
+#+BEGIN_SRC sh
+  apt install graphviz
+#+END_SRC
+
+** Optional
+
+*** [[https://spot.lrde.epita.fr/][Spot: a platform for LTL and ω-automata manipulation]]
+
+Spot's =ltl2tgba= command-line tool is used to convert an LTL formula
+(or, more generally, a "path subformula" that appears in a CTL*
+formula) to a Büchi automaton as part of the translation from CTL* to
+MMC.
+
+*** [[http://nusmv.fbk.eu/][NuSMV]]
+
+#+BEGIN_QUOTE
+NuSMV is a reimplementation and extension of SMV, the first model
+checker based on BDDs. NuSMV has been designed to be an open
+architecture for model checking, which can be reliably used for the
+verification of industrial designs, as a core for custom verification
+tools, as a testbed for formal verification techniques, and applied to
+other research areas.
+#+END_QUOTE
+
+=mc3= can parse and analyze a subset of NuSMV models (refer to
+[[file:src/parser/grammar/nusmv.rkt]] and
+[[file:src/parser/nusmv.rkt]]).  Follow the links on NuSMV's website
+to download a copy.
+
+*** [[http://fmv.jku.at/aiger/][AIGER]]
+
+#+BEGIN_QUOTE
+AIGER is a format, library and set of utilities for And-Inverter
+Graphs (AIGs).
+#+END_QUOTE
+
+The AIGER tools can be downloaded from
+[[http://fmv.jku.at/aiger/aiger-1.9.9.tar.gz]].  Two of them in
+particular --- =aigtoaig= and =aigtosmv= --- are used for processing
+benchmark problems that are defined in the AIGER format (refer to
+[[file:src/parser/aiger.rkt]] and [[file:benchmarks/Makefile]]).
